@@ -3,15 +3,10 @@ package com.example.mycodeweek1
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
@@ -32,7 +27,24 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun MyApp(names: List<String> = listOf("World", "Compose")) {
-    Column {
+//    Column {
+//        for (name in names) {
+//            Greeting(name = name)
+//        }
+//    }
+    var shouldShowOnboarding by remember { mutableStateOf(true) }
+
+    if (shouldShowOnboarding) {
+        OnboardingScreen(/* TODO */)
+    } else {
+        Greetings()
+    }
+}
+
+// 화면B
+@Composable
+private fun Greetings(names: List<String> = listOf("World", "Compose")) {
+    Column(modifier = Modifier.padding(vertical = 4.dp)) {
         for (name in names) {
             Greeting(name = name)
         }
@@ -48,6 +60,29 @@ fun DefaultPreview() {
     }
 }
 
+// 화면A
+@Composable
+fun OnboardingScreen() {
+    // TODO: This state should be hoisted
+    var shouldShowOnboarding by remember { mutableStateOf(true) }
+
+    Surface {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Welcome to the Basics Codelab!")
+            Button(
+                modifier = Modifier.padding(vertical = 24.dp),
+                onClick = { shouldShowOnboarding = false }
+            ) {
+                Text("Continue")
+            }
+        }
+    }
+}
+
 
 data class Message(val author: String, val body: String)
 
@@ -59,20 +94,24 @@ fun MessageCard(msg: Message) {
 }
 @Composable
 fun Greeting(name: String) {
+    val expanded = remember { mutableStateOf(false) }
+    val extraPadding = if (expanded.value) 48.dp else 0.dp
+
     Surface(
         color = MaterialTheme.colors.primary,
         modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
     ) {
         Row(modifier = Modifier.padding(24.dp)) {
-            Column(modifier = Modifier.weight(1f)) {
+            Column(modifier = Modifier.weight(1f).padding(extraPadding)) {
                 Text(text = "Hello, ")
                 Text(text = name)
             }
             OutlinedButton(
-                onClick = { /* TODO */ }
+                onClick = { expanded.value = !expanded.value },
             ) {
-                Text("Show more")
+                Text(if (expanded.value) "Show less" else "Show more")
             }
+
         }
     }
 }
